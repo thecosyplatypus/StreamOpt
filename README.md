@@ -1,6 +1,6 @@
 # StreamOpt
 
-![Version](https://img.shields.io/badge/version-0.1.0--beta-c084fc)
+![Version](https://img.shields.io/badge/version-0.2.0--beta-c084fc)
 ![Platform](https://img.shields.io/badge/platform-windows-lightgrey)
 ![Electron](https://img.shields.io/badge/electron-43-blue)
 
@@ -8,15 +8,17 @@
 
 ## How it works
 
-StreamOpt records viewer counts every 60 seconds, groups them into 30-minute segments, and calculates a retention curve. You set a threshold — *"stop when viewers drop to 50% of my peak"* — and the app shows exactly when to end the stream.
+StreamOpt polls the Twitch API every 60 seconds while you stream, recording viewer counts and grouping them into 30-minute segments. It calculates a retention curve based on your peak audience, then finds the point where viewership drops below your threshold. The result: a clear recommendation for when to end the stream.
 
 ## Features
 
 - **Live tracking** — polls Twitch API every 60s, builds a viewer decay curve in real time
-- **VOD analysis** — fetch past VODs for any channel and analyze retention patterns
+- **VOD analysis** — fetch past VODs for any channel and analyze their retention patterns
+- **Configurable threshold** — set the retention % at which you want to stop (e.g., 50% of peak)
+- **Configurable min duration** — choose the minimum stream length before the app suggests stopping (1–12h, default 6h)
 - **Knee detection** — automatically finds where viewer retention drops below your threshold
-- **6-hour minimum** — no premature recommendations; floor of 6 hours before suggesting a stop
 - **Visual chart** — purple viewer bars + green retention line + red optimal stop marker
+- **Live replay** — after stopping, your tracking data stays as a replay VOD for continued analysis
 
 ## Download
 
@@ -32,14 +34,9 @@ Grab the latest installer from the [Releases](https://github.com/thecosyplatypus
 ### Setup
 
 ```bash
-# Clone the repo
 git clone https://github.com/thecosyplatypus/StreamOpt.git
 cd StreamOpt
-
-# Install dependencies
 npm install
-
-# Launch the app
 npm start
 ```
 
@@ -55,9 +52,10 @@ npm start
 
 ```
 1. Paste Client ID + Secret → Connect
-2. Enter a channel name → Fetch VODs (or just Start Tracking)
+2. Enter a channel name → Start Tracking (live) or Fetch VODs (past streams)
 3. Set your retention threshold (default: 50% of peak viewers)
-4. Click Analyze or start live tracking
+4. Set your min stream duration (default: 6h)
+5. Watch the chart update live during your stream
 ```
 
 The chart shows:
