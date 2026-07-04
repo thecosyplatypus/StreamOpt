@@ -1,0 +1,8 @@
+node_modules/
+dist/
+release/
+*.exe
+*.dll
+*.zip
+.DS_Store
+Thumbs.db

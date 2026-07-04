@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StreamOpt</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="app">
+    <header>
+      <h1>StreamOpt</h1>
+      <span class="tagline">viewer decay analyzer</span>
+    </header>
+
+    <main>
+      <aside id="controls">
+        <div class="control-group">
+          <label>Twitch API</label>
+          <input type="text" id="client-id" placeholder="Client ID" spellcheck="false" />
+          <input type="password" id="client-secret" placeholder="Client Secret" />
+          <div class="row">
+            <button id="connect-btn" class="btn-secondary">Connect</button>
+            <span id="connect-status" class="status-badge disconnected">Disconnected</span>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="control-group">
+          <label>Channel</label>
+          <div class="row">
+            <input type="text" id="channel-input" placeholder="channel name" spellcheck="false" />
+            <button id="fetch-btn" class="btn-secondary" disabled>Fetch</button>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="control-group">
+          <label>Live Tracking</label>
+          <button id="start-track-btn" class="btn-secondary" disabled>▶ Start Tracking</button>
+          <div id="track-active" style="display:none;">
+            <div class="track-info">
+              <div class="track-stat">
+                <span class="track-stat-label">Duration</span>
+                <span class="track-stat-value" id="track-duration">0h 00m</span>
+              </div>
+              <div class="track-stat">
+                <span class="track-stat-label">Viewers</span>
+                <span class="track-stat-value" id="track-viewers">—</span>
+              </div>
+              <div class="track-stat">
+                <span class="track-stat-label">Points</span>
+                <span class="track-stat-value" id="track-points">0</span>
+              </div>
+              <span class="live-dot"></span>
+            </div>
+            <button id="stop-track-btn" class="btn-danger">■ Stop</button>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="control-group">
+          <label for="vod-select">Select VOD</label>
+          <select id="vod-select"></select>
+          <div id="vod-info" class="vod-info"></div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="control-group">
+          <label for="threshold">Stop at (% of peak viewers)</label>
+          <div class="slider-row">
+            <input type="range" id="threshold" min="10" max="90" step="1" value="50">
+            <span id="threshold-val">50%</span>
+          </div>
+        </div>
+
+        <button id="analyze-btn">Analyze</button>
+      </aside>
+
+      <section id="results">
+        <div id="metrics">
+          <div class="metric-card">
+            <span class="metric-label">Optimal Stop</span>
+            <span class="metric-value" id="opt-stop">—</span>
+            <span class="metric-unit">hours</span>
+          </div>
+          <div class="metric-card">
+            <span class="metric-label">Peak Viewers</span>
+            <span class="metric-value" id="peak-viewers">—</span>
+            <span class="metric-unit">viewers</span>
+          </div>
+          <div class="metric-card">
+            <span class="metric-label">Avg Viewers</span>
+            <span class="metric-value" id="avg-viewers">—</span>
+            <span class="metric-unit">viewers</span>
+          </div>
+          <div class="metric-card">
+            <span class="metric-label">Retention at Stop</span>
+            <span class="metric-value" id="retention-stop">—</span>
+            <span class="metric-unit">%</span>
+          </div>
+          <div class="metric-card">
+            <span class="metric-label">Viewer-Hours</span>
+            <span class="metric-value" id="viewer-hours">—</span>
+            <span class="metric-unit">viewer-hours</span>
+          </div>
+          <div class="metric-card">
+            <span class="metric-label">Avg Decay Rate</span>
+            <span class="metric-value" id="decay-rate">—</span>
+            <span class="metric-unit">% / hr</span>
+          </div>
+        </div>
+
+        <div id="chart-container">
+          <canvas id="chart-canvas"></canvas>
+        </div>
+
+        <div id="legend"></div>
+      </section>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
