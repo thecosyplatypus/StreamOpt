@@ -1,5 +1,5 @@
 class StreamAnalyzer {
-  analyze(segments, retentionThreshold = 0.5) {
+  analyze(segments, retentionThreshold = 0.5, minHours = 6) {
     const blockDurationHours = segments[0].durationMinutes / 60;
     const peakViewers = Math.max(...segments.map(s => s.avgViewers));
     let cumulativeViewerHours = 0;
@@ -37,7 +37,6 @@ class StreamAnalyzer {
       }
     }
 
-    const MIN_STREAM_HOURS = 6;
     let optimalStopTime = curve[curve.length - 1].time;
     for (let i = peakIdx + 1; i < curve.length; i++) {
       if (curve[i].viewerRetention / 100 < retentionThreshold) {
@@ -45,8 +44,8 @@ class StreamAnalyzer {
         break;
       }
     }
-    if (optimalStopTime < MIN_STREAM_HOURS) {
-      optimalStopTime = MIN_STREAM_HOURS;
+    if (optimalStopTime < minHours) {
+      optimalStopTime = minHours;
     }
 
     const kneeSegment = curve.find(p => p.time === optimalStopTime);

@@ -158,8 +158,9 @@ class LiveTracker {
 // StreamAnalyzer
 // ============================================================
 class StreamAnalyzer {
-  analyze(segments, retentionThreshold) {
+  analyze(segments, retentionThreshold, minHours) {
     if (retentionThreshold === undefined) retentionThreshold = 0.5;
+    if (minHours === undefined) minHours = 6;
     var blockDurationHours = segments[0].durationMinutes / 60;
     var peakViewers = Math.max.apply(null, segments.map(function(s) { return s.avgViewers; }));
     var cumulativeViewerHours = 0;
@@ -195,7 +196,6 @@ class StreamAnalyzer {
       if (curve[j].avgViewers > curve[peakIdx].avgViewers) peakIdx = j;
     }
 
-    var MIN_STREAM_HOURS = 6;
     var optimalStopTime = curve[curve.length - 1].time;
     for (var k = peakIdx + 1; k < curve.length; k++) {
       if (curve[k].viewerRetention / 100 < retentionThreshold) {
@@ -203,7 +203,7 @@ class StreamAnalyzer {
         break;
       }
     }
-    if (optimalStopTime < MIN_STREAM_HOURS) optimalStopTime = MIN_STREAM_HOURS;
+    if (optimalStopTime < minHours) optimalStopTime = minHours;
 
     var kneeSegment = curve.find(function(p) { return p.time === optimalStopTime; });
     var retentionAtStop = kneeSegment ? kneeSegment.viewerRetention : curve[curve.length - 1].viewerRetention;
@@ -274,6 +274,8 @@ var vodSelect = document.getElementById('vod-select');
 var vodInfo = document.getElementById('vod-info');
 var thresholdSlider = document.getElementById('threshold');
 var thresholdVal = document.getElementById('threshold-val');
+var minHoursSlider = document.getElementById('min-hours');
+var minHoursVal = document.getElementById('min-hours-val');
 var analyzeBtn = document.getElementById('analyze-btn');
 
 // ============================================================
@@ -491,6 +493,10 @@ thresholdSlider.addEventListener('input', function() {
   thresholdVal.textContent = thresholdSlider.value + '%';
 });
 
+minHoursSlider.addEventListener('input', function() {
+  minHoursVal.textContent = parseFloat(minHoursSlider.value).toFixed(1).replace('.0', '') + 'h';
+});
+
 // ============================================================
 // Canvas
 // ============================================================
@@ -658,8 +664,9 @@ function runAnalysis() {
   }
 
   var threshold = parseFloat(thresholdSlider.value) / 100;
+  var minHours = parseFloat(minHoursSlider.value);
   var analyzer = new StreamAnalyzer();
-  analysisResult = analyzer.analyze(vod.segments, threshold);
+  analysisResult = analyzer.analyze(vod.segments, threshold, minHours);
 
   document.getElementById('opt-stop').textContent = analysisResult.optimalStopTime;
   document.getElementById('peak-viewers').textContent = analysisResult.peakViewers;
